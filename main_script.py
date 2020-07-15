@@ -100,3 +100,6 @@ class Little_r: #Everything about finding epsilon bounds and X0 for a specific g
         self.C = -1*np.dot(W,np.dot(self.gamma_S,W))
         self.cov = linalg.solve_continuous_lyapunov(self.A,self.C)
         return self.cov
+
+    def solve_for_cov_from_initial(self):#gotta_do_something_automatic_here
+        return(self.solve_cov(self.solve_r(self.solve_x()[2])))
