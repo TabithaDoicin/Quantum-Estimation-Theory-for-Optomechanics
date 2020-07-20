@@ -10,6 +10,7 @@ Created on Mon Jul 13 16:17:13 2020
 import numpy as np
 import main_script
 import blockwiseview
+from numba import njit
 
 def block_mult(a, b):
     res = np.zeros([a.shape[0], b.shape[1]],np.ndarray)
@@ -30,7 +31,7 @@ def find_cov(wm, gm, k, d0, n, ep, g0_list, g2_list):
         for m in range(len(g0_list)):
             temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             cov_array[l,m] = temp_obj.solve_for_cov_from_initial()
-    return cov_array
+    return cov_array.copy()
 
 def find_r(wm, gm, k, d0, n, ep, g0_list, g2_list):
     r_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
@@ -38,7 +39,7 @@ def find_r(wm, gm, k, d0, n, ep, g0_list, g2_list):
         for m in range(len(g0_list)):
             temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             r_array[l,m] = temp_obj.roots_x0
-    return r_array
+    return r_array.copy()
 
 def find_x(wm, gm, k, d0, n, ep, g0_list, g2_list):
     x_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
@@ -46,7 +47,7 @@ def find_x(wm, gm, k, d0, n, ep, g0_list, g2_list):
         for m in range(len(g0_list)):
             temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             x_array[l,m] = temp_obj.solve_x()
-    return x_array
+    return x_array.copy()
 
 def prep_qfi(wm, gm, k, d0, n, ep, g0_list, g2_list):
     r_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
@@ -58,7 +59,7 @@ def prep_qfi(wm, gm, k, d0, n, ep, g0_list, g2_list):
             cov_array[l,m] = temp_obj.solve_for_cov_from_initial()
             r_array[l,m] = temp_obj.r
             alpha_squared_array[l,m] = 0.5*(np.real(r_array[l,m][2])**2 + np.real(r_array[l,m][3])**2)
-    return r_array, cov_array, alpha_squared_array
+    return r_array.copy(), cov_array.copy(), alpha_squared_array.copy()
 
 def single_qfi(r_arr, cov_arr, g0_list):
     i = complex(0,1)
@@ -75,7 +76,7 @@ def single_qfi(r_arr, cov_arr, g0_list):
         temp_L_cov = np.kron(temp_cov, temp_cov)
         middle_bit = np.linalg.pinv(4*temp_L_cov + L_w)
         part_a = np.dot(r_diff_arr[ii], np.dot(np.linalg.pinv(temp_cov), r_diff_arr[ii]))
-        part_b = 2*np.trace(easyblock(block_mult(cov_diff_arr[ii],block_mult(blockwiseview.blockwise_view(middle_bit,(4,4)),cov_diff_arr[ii]))))##broken
+        part_b = 2*np.trace(easyblock(block_mult(cov_diff_arr[ii],block_mult(blockwiseview.blockwise_view(middle_bit,(4,4)),cov_diff_arr[ii]))))
         qfi_output_arr[ii] = part_a + part_b
     return qfi_output_arr
 

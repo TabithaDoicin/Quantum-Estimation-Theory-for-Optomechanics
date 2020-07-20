@@ -23,7 +23,7 @@ d0 = 1.1e7
 g0_list = np.linspace(0.1,10000,100)
 g2_list = np.linspace(0,0,1)
 n = 237.5
-ep = 5e8
+ep = 6e8
 ##
 start = time.time()
 ##
@@ -32,9 +32,7 @@ qfi_output = w.single_qfi(r_arr, cov_arr, g0_list)
 rel_output = w.rel_error(qfi_output,g0_list)
 ##
 
-
 print(qfi_output)
 print('Done in ' + str(time.time()-start) + ' seconds.')
-##use np.block() function to bring together then trace, also this is becoming overcomplicatedly slow :(
 
 plt.scatter(a_sq,rel_output)
