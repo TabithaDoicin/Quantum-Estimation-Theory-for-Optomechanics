@@ -13,34 +13,8 @@ import main_script
 from timeit import default_timer as timer 
 from numba import jit
 import blockwiseview
-##not_mine
-def blockshaped(arr, nrows, ncols):
-    """
-    Return an array of shape (n, nrows, ncols) where
-    n * nrows * ncols = arr.size
-
-    If arr is a 2D array, the returned array looks like n subblocks with
-    each subblock preserving the "physical" layout of arr.
-    """
-    h, w = arr.shape
-    return (arr.reshape(h//nrows, nrows, -1, ncols)
-               .swapaxes(1,2)
-               .reshape(-1, nrows, ncols))
 
 
-def unblockshaped(arr, h, w):
-    """
-    Return an array of shape (h, w) where
-    h * w = arr.size
-
-    If arr is of shape (n, nrows, ncols), n sublocks of shape (nrows, ncols),
-    then the returned array preserves the "physical" layout of the sublocks.
-    """
-    n, nrows, ncols = arr.shape
-    return (arr.reshape(h//nrows, -1, nrows, ncols)
-               .swapaxes(1,2)
-               .reshape(h, w))
-##not_mine
 def find_cov(wm, gm, k, d0, n, ep, g0_list, g2_list):
     cov_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
     for l in range(len(g2_list)):
