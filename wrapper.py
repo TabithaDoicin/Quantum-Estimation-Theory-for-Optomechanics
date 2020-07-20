@@ -8,13 +8,90 @@ Created on Mon Jul 13 16:17:13 2020
 #!usr/bin/python
 
 import numpy as np
+from numpy import linalg
 import main_script
 from timeit import default_timer as timer 
+from numba import jit
+import blockwiseview
+##not_mine
+def blockshaped(arr, nrows, ncols):
+    """
+    Return an array of shape (n, nrows, ncols) where
+    n * nrows * ncols = arr.size
 
+    If arr is a 2D array, the returned array looks like n subblocks with
+    each subblock preserving the "physical" layout of arr.
+    """
+    h, w = arr.shape
+    return (arr.reshape(h//nrows, nrows, -1, ncols)
+               .swapaxes(1,2)
+               .reshape(-1, nrows, ncols))
+
+
+def unblockshaped(arr, h, w):
+    """
+    Return an array of shape (h, w) where
+    h * w = arr.size
+
+    If arr is of shape (n, nrows, ncols), n sublocks of shape (nrows, ncols),
+    then the returned array preserves the "physical" layout of the sublocks.
+    """
+    n, nrows, ncols = arr.shape
+    return (arr.reshape(h//nrows, -1, nrows, ncols)
+               .swapaxes(1,2)
+               .reshape(h, w))
+##not_mine
 def find_cov(wm, gm, k, d0, n, ep, g0_list, g2_list):
-    cov_array = np.zeros([len(g2_list),len(g0_list)],object)
+    cov_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
     for l in range(len(g2_list)):
         for m in range(len(g0_list)):
             temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             cov_array[l,m] = temp_obj.solve_for_cov_from_initial()
     return cov_array
+
+def find_r(wm, gm, k, d0, n, ep, g0_list, g2_list):
+    r_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
+    for l in range(len(g2_list)):
+        for m in range(len(g0_list)):
+            temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
+            r_array[l,m] = temp_obj.roots_x0
+    return r_array
+
+def find_x(wm, gm, k, d0, n, ep, g0_list, g2_list):
+    x_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
+    for l in range(len(g2_list)):
+        for m in range(len(g0_list)):
+            temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
+            x_array[l,m] = temp_obj.solve_x()
+    return x_array
+
+def prep_qfi(wm, gm, k, d0, n, ep, g0_list, g2_list):
+    r_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
+    cov_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
+    for l in range(len(g2_list)):
+        for m in range(len(g0_list)):
+            temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
+            cov_array[l,m] = temp_obj.solve_for_cov_from_initial()
+            r_array[l,m] = temp_obj.r
+    return r_array, cov_array
+
+def single_qfi(r_arr, cov_arr, g0_list):
+    i = complex(0,1)
+    W = np.array([[0,i,0,0],
+              [-1*i,0,0,0],
+              [0,0,0,i],
+              [0,0,-1*i,0]])
+    L_w = np.kron(W,W)
+    r_diff_arr = np.gradient([r_arr[0,:][ii] for ii in range(len(g0_list))], g0_list[1]-g0_list[0], axis=0)
+    cov_diff_arr = np.gradient([cov_arr[0,:][ii] for ii in range(len(g0_list))], g0_list[1]-g0_list[0], axis=0)
+    qfi_output_arr = np.zeros([len(g0_list)], np.complex128)
+    for ii in range(len(g0_list)-1):
+        temp_cov = cov_arr[0,:][ii]
+        temp_L_cov = np.kron(temp_cov, temp_cov)
+        middle_bit = np.linalg.pinv(4*temp_L_cov + L_w)
+        part_a = np.dot(r_diff_arr[ii], np.dot(np.linalg.pinv(temp_cov), r_diff_arr[ii]))
+        print(middle_bit.shape)
+        print(temp_cov.shape)
+        part_b = 2*np.trace(np.matmul(cov_diff_arr[ii],np.matmul(middle_bit,cov_diff_arr[ii])))
+        qfi_output_arr[ii] = part_a + part_b
+    return qfi_output_arr

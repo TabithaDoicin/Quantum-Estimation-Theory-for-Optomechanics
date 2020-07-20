@@ -32,10 +32,10 @@ class Little_r: #Everything about finding epsilon bounds and X0 for a specific g
     
     def range_of_epsilon(self, eval_dis = False): #function that finds epsilon bounds and also value of discriminant between epsilon values
         if self.g2 != 0:
-            print('Cannot find determinant due to quintic, skipping finding better range of epsilon')
+            print('Cannot find determinant due to quintic.')
             pass
         elif self.g0 == 0:
-            print('g0 cannot be 0, choose a different range')
+            print('g0 cannot be 0, choose a different range.')
             pass
         else:
             a = 2 * self.g0**2 * (self.wm**2 + 0.25 * self.gm**2) #a
@@ -62,7 +62,7 @@ class Little_r: #Everything about finding epsilon bounds and X0 for a specific g
                     self.dis_val.append(val)
             return [self.r_of_e_sorted[2], self.r_of_e_sorted[3]]
     
-    def solve_x(self): #find_all referring to other means
+    def solve_x(self): #finds all roots of polynomial for x
         a = 0.25 * self.g2**2 * (self.gm**2 + 4 * self.wm**2)
         b = -((self.g0*self.g2*(self.gm**2 + 4*self.wm**2))/2**0.5)
         c = (1/2)*self.g0**2*(self.gm**2 + 4*self.wm**2) + (1/2)*self.d0*self.g2*(self.gm**2 + 4*self.wm**2)
@@ -70,16 +70,17 @@ class Little_r: #Everything about finding epsilon bounds and X0 for a specific g
         e = 2*self.ep**2*self.g2*self.wm + (1/4)*self.d0**2*(self.gm**2 + 4*self.wm**2) + (1/16)*self.k**2*(self.gm**2 + 4*self.wm**2)
         f = (-2**0.5)*self.ep**2*self.g0*self.wm
         self.roots_x0 = np.roots([a,b,c,d,e,f])
-        return self.roots_x0
+        self.root = self.roots_x0[len(self.roots_x0)-1] #last root in the array given is always the real root
+        return self.root
     
-    def solve_r(self, x): #returns[x0,p0,x1,p1]
+    def solve_r(self, x): #uses the chosen root to return [x0,p0,x1,p1]
         def d_eff(y): #delta_eff
             return (self.d0 - 2**0.5 * self.g0 * y + self.g2 * y**2)
-        self.r = []
-        self.r.append(x) #X0
-        self.r.append(0.5*self.gm * (self.wm)**-1 * x) #p0
-        self.r.append(2**-0.5 * -2 * d_eff(x) * self.ep * (d_eff(x)**2 + self.k**2 * 0.25)**-1) #x1 (Q0)
-        self.r.append(2**-0.5 * -1 * self.k * self.ep * (d_eff(x)**2 + self.k**2 * 0.25)**-1) # p1 (P1)
+        self.r = np.zeros([4], dtype = np.complex128)
+        self.r[0] = x #X0
+        self.r[1] = (0.5*self.gm * (self.wm)**-1 * x) #p0
+        self.r[2] = (2**-0.5 * -2 * d_eff(x) * self.ep * (d_eff(x)**2 + self.k**2 * 0.25)**-1) #x1 (Q0)
+        self.r[3] = (2**-0.5 * -1 * self.k * self.ep * (d_eff(x)**2 + self.k**2 * 0.25)**-1) # p1 (P1)
         return self.r
 
     def solve_cov(self, r):
@@ -102,4 +103,5 @@ class Little_r: #Everything about finding epsilon bounds and X0 for a specific g
         return self.cov
 
     def solve_for_cov_from_initial(self):#gotta_do_something_automatic_here
-        return(self.solve_cov(self.solve_r(self.solve_x()[2])))
+        self.solve_x()
+        return(self.solve_cov(self.solve_r(self.root)))
