@@ -12,14 +12,14 @@ import main_script
 import blockwiseview
 from numba import njit
 
-def block_mult(a, b):
+def block_mult(a, b):#dont need this but its still cool
     res = np.zeros([a.shape[0], b.shape[1]],np.ndarray)
     for l in range(a.shape[0]):
         for m in range(b.shape[1]):
             res[l][m] = sum([np.dot(a[l][ii], b[ii][m]) for ii in range(a.shape[1])])
     return res
                 
-def easyblock(arr):
+def easyblock(arr):#dont need this but its still cool
     return np.block([[arr[0][0],arr[0][1],arr[0][2],arr[0][3]],
                      [arr[1][0],arr[1][1],arr[1][2],arr[1][3]],
                      [arr[2][0],arr[2][1],arr[2][2],arr[2][3]],
@@ -70,13 +70,13 @@ def single_qfi(r_arr, cov_arr, g0_list):
     L_w = np.kron(W,W)
     r_diff_arr = np.gradient([r_arr[0,:][ii] for ii in range(len(g0_list))], g0_list[1]-g0_list[0], axis=0)
     cov_diff_arr = np.gradient([cov_arr[0,:][ii] for ii in range(len(g0_list))], g0_list[1]-g0_list[0], axis=0)
-    qfi_output_arr = np.zeros([len(g0_list)], np.complex128)
+    qfi_output_arr = np.zeros([len(g0_list)], np.float64)
     for ii in range(len(g0_list)-1):
         temp_cov = cov_arr[0,:][ii]
         temp_L_cov = np.kron(temp_cov, temp_cov)
         middle_bit = np.linalg.pinv(4*temp_L_cov + L_w)
         part_a = np.dot(r_diff_arr[ii], np.dot(np.linalg.pinv(temp_cov), r_diff_arr[ii]))
-        part_b = 2*np.trace(easyblock(block_mult(cov_diff_arr[ii],block_mult(blockwiseview.blockwise_view(middle_bit,(4,4)),cov_diff_arr[ii]))))
+        part_b = 2*np.dot(np.ravel(cov_diff_arr[ii]),np.matmul(middle_bit,np.ravel(cov_diff_arr[ii])))#?????
         qfi_output_arr[ii] = part_a + part_b
     return qfi_output_arr
 

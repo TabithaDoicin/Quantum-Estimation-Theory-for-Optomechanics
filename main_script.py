@@ -69,7 +69,7 @@ class Little_r: #Everything about finding epsilon bounds and X0 for a specific g
         d = -((self.d0*self.g0*(self.gm**2 + 4*self.wm**2))/2**0.5)
         e = 2*self.ep**2*self.g2*self.wm + (1/4)*self.d0**2*(self.gm**2 + 4*self.wm**2) + (1/16)*self.k**2*(self.gm**2 + 4*self.wm**2)
         f = (-2**0.5)*self.ep**2*self.g0*self.wm
-        self.roots_x0 = np.roots([a,b,c,d,e,f])
+        self.roots_x0 = np.roots([a,b,c,d,e,f])#numpy roots function
         self.root = self.roots_x0[len(self.roots_x0)-1] #last root in the array given is always the real root
         return self.root
     
@@ -102,6 +102,6 @@ class Little_r: #Everything about finding epsilon bounds and X0 for a specific g
         self.cov = linalg.solve_continuous_lyapunov(self.A,self.C)
         return self.cov
 
-    def solve_for_cov_from_initial(self):#gotta_do_something_automatic_here
+    def solve_for_cov_from_initial(self):#gotta_do_something_automatic_here--done!
         self.solve_x()
         return(self.solve_cov(self.solve_r(self.root)))
