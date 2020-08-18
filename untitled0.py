@@ -23,7 +23,7 @@ d0 = 1.1e7
 g0_list = np.linspace(200,200.0001,5)
 g2_list = np.linspace(0,0,1)
 n = 237.54
-ep_list = np.linspace(3.9e9,1.64e11,100)
+ep_list = np.linspace(1e8,4e9,200)
 
 ##
 
@@ -55,11 +55,18 @@ rel_list_epsilon = np.zeros([len(ep_list)])
 
 for ii in range(len(ep_list)):
     a_sq_list_epsilon[ii] = a_sq_arr[ii][0][2] #because this outputs for g2 too
-    qfi_list_epsilon[ii] = qfi_output_arr[ii][2]
+    qfi_list_epsilon[ii] = wm**2 * qfi_output_arr[ii][2]
     rel_list_epsilon[ii] = rel_output_arr[ii][2]
     
 #print(qfi_list_epsilon)
-plt.scatter(np.log(a_sq_list_epsilon), np.log(qfi_list_epsilon))
+fig, ax = plt.subplots()
+ax.scatter(np.log(a_sq_list_epsilon), np.log(qfi_list_epsilon))
+plt.xlabel(r'$ \ln(\mid\alpha\mid ^2)$', fontsize=14) 
+plt.ylabel(r'$\ln(QFI)$', fontsize=14)
+plt.rc('xtick', labelsize=10)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=10)
+plt.show()
+
 #plt.scatter(a_sq_list_epsilon, qfi_list_epsilon)
 print('This took ' + str(time.time() - start) + ' seconds.')
 
