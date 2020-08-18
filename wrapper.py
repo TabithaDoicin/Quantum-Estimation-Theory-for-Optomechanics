@@ -10,7 +10,7 @@ Created on Mon Jul 13 16:17:13 2020
 import numpy as np
 import main_script
 import blockwiseview
-from numba import njit
+from numba import jit
 
 def block_mult(a, b):#dont need this but its still cool
     res = np.zeros([a.shape[0], b.shape[1]],np.ndarray)
@@ -58,6 +58,16 @@ def prep_qfi(wm, gm, k, d0, n, ep, g0_list, g2_list):
             temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             cov_array[l,m] = temp_obj.solve_for_cov_from_initial()
             r_array[l,m] = temp_obj.r
+            alpha_squared_array[l,m] = 0.5*(np.real(r_array[l,m][2])**2 + np.real(r_array[l,m][3])**2)
+    return r_array.copy(), cov_array.copy(), alpha_squared_array.copy()
+
+def prep_qfi_efficient(wm, gm, k, d0, n, ep, g0_list, g2_list):
+    r_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
+    cov_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
+    alpha_squared_array = np.zeros([len(g2_list),len(g0_list)])
+    for l in range(len(g2_list)):
+        for m in range(len(g0_list)):
+            r_array[l,m], cov_array[l,m] = main_script.efficient_solver(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             alpha_squared_array[l,m] = 0.5*(np.real(r_array[l,m][2])**2 + np.real(r_array[l,m][3])**2)
     return r_array.copy(), cov_array.copy(), alpha_squared_array.copy()
 

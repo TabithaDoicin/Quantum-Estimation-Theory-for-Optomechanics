@@ -9,6 +9,7 @@ Created on Thu Jun 25 12:27:36 2020
 
 import numpy as np
 from scipy import linalg
+from numba import jit
 
 ##Constants
 i = complex(0,1) #for simplicity in writing later
@@ -18,7 +19,7 @@ W = np.array([[0,i,0,0],
               [0,0,-1*i,0]])
 hb = 1.0545718e-34
 
-class Little_r: #Everything about finding epsilon bounds and X0 for a specific g0, other mean values too(that are based off X0)
+class Little_r: #Everything about finding epsilon bounds and X0 for a specific g0
     
     def __init__(self, wm, gm, k, d0, g0, ep=0, g2=0, n=0):
         self.wm = wm #omega_m
@@ -102,6 +103,55 @@ class Little_r: #Everything about finding epsilon bounds and X0 for a specific g
         self.cov = linalg.solve_continuous_lyapunov(self.A,self.C)
         return self.cov
 
-    def solve_for_cov_from_initial(self):#gotta_do_something_automatic_here--done!
+    def solve_for_cov_from_initial(self):
         self.solve_x()
         return(self.solve_cov(self.solve_r(self.root)))
+    
+#@jit(nopython = False, fastmath=True, nogil=True, cache=True)
+def efficient_solver(wm, gm, k, d0, g0, ep, g2, n, recalib = False, checks = False):
+    ##initialisation of some data arrays for speed##
+    r = np.zeros((4), dtype = np.complex128)
+    ##finding x0##
+    a = 0.25 * g2**2 * (gm**2 + 4 * wm**2)
+    b = -((g0*g2*(gm**2 + 4*wm**2))/2**0.5)
+    c = (1/2)*g0**2*(gm**2 + 4*wm**2) + (1/2)*d0*g2*(gm**2 + 4*wm**2)
+    d = -((d0*g0*(gm**2 + 4*wm**2))/2**0.5)
+    e = 2*ep**2*g2*wm + (1/4)*d0**2*(gm**2 + 4*wm**2) + (1/16)*k**2*(gm**2 + 4*wm**2)
+    f = (-2**0.5)*ep**2*g0*wm
+    roots_x0 = np.roots(np.array([a,b,c,d,e,f], dtype = np.complex128))#numpy roots function
+    r[0] = roots_x0[len(roots_x0)-1] #last root in the array given is always the real root, also this is x0
+    x = r[0]#as far as i know this utilises data casting, so no extra memory use or speed loss
+    ##finding p0,x1,p1, and putting it all into a numpy array##
+    r[1] = (0.5*gm * (wm)**-1 * x) #p0
+    ##
+    d_eff = d0 - 2**0.5 * g0 *x + g2 * x**2
+    ##recalibration if needed-idk about how this works but ill implement for the moment and turn it off##
+    if recalib == True: #only for g2=0 at the moment, need to get recalibrations from kamila sometime
+        d0 = d_eff + 2**0.5 * g0 * x
+        d_eff = wm
+    else:
+        pass
+    ##
+    r[2] = (2**-0.5 * -2 * d_eff * ep * (d_eff**2 + k**2 * 0.25)**-1) #x1 (Q0)
+    r[3] = (2**-0.5 * -1 * k * ep * (d_eff**2 + k**2 * 0.25)**-1) # p1 (P1)
+    ##solving covariance matrix
+    gamma = 0.5*np.array([[k,-k*i,0,0],
+             [k*i,k,0,0],
+             [0,0,gm*(2*n+1),-1*i*gm],
+             [0,0,gm*i,gm*(2*n+1)]])
+    gamma_A = 0.5*(gamma-np.transpose(gamma))
+    gamma_S = 0.5*(gamma+np.transpose(gamma))
+    H = np.array([[hb * d_eff, 0, -2**0.5 * g0 * hb * r[2], 0],
+                           [0, hb * d_eff, -2**0.5 * g0 * hb * r[3], 0],
+                           [-2**0.5 * g0 * hb * r[2], -2**0.5 * g0 * hb * r[3], hb*wm, 0],
+                           [0,0,0, hb*wm]])
+    A = -1*i/hb*np.dot(W,H) + np.dot(W,gamma_A)
+    C = -1*np.dot(W,np.dot(gamma_S,W))
+    cov = linalg.solve_continuous_lyapunov(A,C)
+    if checks == True:
+        rs_test = 2*cov + W
+        print('RS-Matrix:')
+        print(np.around(rs_test,5))
+        print('Eigenvectors and eigenvalues of B:')
+        print(np.linalg.eig(np.transpose(A)))
+    return r, cov
