@@ -126,11 +126,11 @@ def efficient_solver(wm, gm, k, d0, g0, ep, g2, n, recalib = False, checks = Fal
     ##
     d_eff = d0 - 2**0.5 * g0 *x + g2 * x**2
     ##recalibration if needed-idk about how this works but ill implement for the moment and turn it off##
-    if recalib == True: #only for g2=0 at the moment, need to get recalibrations from kamila sometime
+    if recalib == True: #only for g2=0 at the moment, need to get recalibration eqns from kamila sometime
         d0 = d_eff + 2**0.5 * g0 * x
         d_eff = wm
     else:
-        pass
+        pass ##recalbration on doesnt seem to do anything-need to ask about this
     ##
     r[2] = (2**-0.5 * -2 * d_eff * ep * (d_eff**2 + k**2 * 0.25)**-1) #x1 (Q0)
     r[3] = (2**-0.5 * -1 * k * ep * (d_eff**2 + k**2 * 0.25)**-1) # p1 (P1)
