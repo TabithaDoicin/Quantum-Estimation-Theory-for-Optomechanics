@@ -9,7 +9,6 @@ Created on Thu Jun 25 12:27:36 2020
 
 import numpy as np
 from scipy import linalg
-from numba import jit
 
 ##Constants
 i = complex(0,1) #for simplicity in writing later
@@ -107,7 +106,6 @@ class Little_r: #Everything about finding epsilon bounds and X0 for a specific g
         self.solve_x()
         return(self.solve_cov(self.solve_r(self.root)))
     
-#@jit(nopython = False, fastmath=True, nogil=True, cache=True)
 def efficient_solver(wm, gm, k, d0, g0, ep, g2, n, recalib = False, checks = False):
     ##initialisation of some data arrays for speed##
     r = np.zeros((4), dtype = np.complex128)

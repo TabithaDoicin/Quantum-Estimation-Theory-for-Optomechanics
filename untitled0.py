@@ -21,7 +21,7 @@ gm = 32
 k = 2e5
 d0 = 1.1e7
 g0_list = np.linspace(200,200.0001,2)
-g2_list = np.linspace(0,0,1)
+g2_list = np.linspace(0,0,2)
 n = 237.54
 ep_list = np.linspace(1e8,1e10,1000)
 
@@ -38,18 +38,15 @@ rel_output_arr = np.zeros([len(ep_list)],np.ndarray)
 
 for ii in range(len(ep_list)):#implement something like this in wrapper
     r_arr_arr[ii], cov_arr_arr[ii], a_sq_arr[ii] = w.prep_qfi_efficient(wm, gm, k, d0, n, ep_list[ii], g0_list, g2_list)
-    qfi_output_arr[ii] = w.single_qfi(r_arr_arr[ii], cov_arr_arr[ii], g0_list)
-    rel_output_arr[ii] = w.rel_error(qfi_output_arr[ii],g0_list)
+    qfi_output_arr[ii] = w.multi_qfi(r_arr_arr[ii], cov_arr_arr[ii], g0_list, g2_list)[0,0] #which deri
     
 a_sq_list_epsilon = np.zeros([len(ep_list)])
 qfi_list_epsilon = np.zeros([len(ep_list)])
 rel_list_epsilon = np.zeros([len(ep_list)])
-#print(a_sq_arr)
-
+#print(qfi_output_arr)
 for ii in range(len(ep_list)):
     a_sq_list_epsilon[ii] = a_sq_arr[ii][0][0] #because this outputs for g2 too
-    qfi_list_epsilon[ii] = wm**2 * qfi_output_arr[ii][0]
-    rel_list_epsilon[ii] = rel_output_arr[ii][0]
+    qfi_list_epsilon[ii] = wm**2 * qfi_output_arr[ii][0,0]#choose which bit of qfi i take
     
 #print(qfi_list_epsilon)
 fig, ax = plt.subplots()
