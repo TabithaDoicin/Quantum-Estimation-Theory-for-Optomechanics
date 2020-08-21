@@ -30,12 +30,4 @@ ep = 6e8
 
 print('derivative TESTING:::')
 
-r_arr, cov_arr, a_arr = w.prep_qfi_efficient_test(wm, gm, k, d0, n, ep, g0_list, g2_list)
-
-print(cov_arr)
-c = unarrayify(cov_arr)
-
-#print(np.gradient(c,axis=1))#g0
-print(np.gradient(c,axis=0))#g2
-
 

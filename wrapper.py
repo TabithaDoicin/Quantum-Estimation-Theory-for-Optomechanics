@@ -106,7 +106,7 @@ def multi_qfi(r_arr, cov_arr, g0_list, g2_list):
             part_a[0,0] = np.dot(r_diff_arr_1[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_1[l][m]))
             part_b[0,0] = 2*np.dot(np.ravel(cov_diff_arr_1[l][m]),np.matmul(middle_bit,np.ravel(cov_diff_arr_1[l][m])))
             #g0g2?
-            part_a[0,1] = np.dot(r_diff_arr_1[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_2[l][m]))
+            part_a[0,1] = np.dot(r_diff_arr_1[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_2[l][m]))#these arent symmetrical yet
             part_b[0,1] = 2*np.dot(np.ravel(cov_diff_arr_1[l][m]),np.matmul(middle_bit,np.ravel(cov_diff_arr_2[l][m])))
             #g2g0? might have to switch idk
             part_a[1,0] = np.dot(r_diff_arr_2[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_1[l][m]))

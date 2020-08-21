@@ -149,7 +149,7 @@ def efficient_solver(wm, gm, k, d0, g0, ep, g2, n, recalib = False, checks = Fal
     if checks == True:
         rs_test = 2*cov + W
         print('RS-Matrix:')
-        print(np.around(rs_test,5))
+        print(np.linalg.eig(rs_test)[0])
         print('Eigenvectors and eigenvalues of B:')
-        print(np.linalg.eig(np.transpose(A)))
+        print(np.linalg.eig(np.transpose(A))[0])
     return r, cov

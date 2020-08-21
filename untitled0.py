@@ -21,11 +21,11 @@ gm = 32
 k = 2e5
 d0 = 1.1e7
 g0_list = np.linspace(200,200.0001,2)
-g2_list = np.linspace(0,0.001,2)
+g2_list = np.linspace(50,50.001,2)
 n = 237.54
 min_ep = 3.88e9
 max_ep = 1.64e11
-ep_list = np.linspace(0,1e12,1000)
+ep_list = np.linspace(3.7e9,1.7e12,10)
 
 ##
 
@@ -48,7 +48,7 @@ rel_list_epsilon = np.zeros([len(ep_list)])
 #print(qfi_output_arr)
 for ii in range(len(ep_list)):
     a_sq_list_epsilon[ii] = a_sq_arr[ii][0][0] #because this outputs for g2 too
-    qfi_list_epsilon[ii] = wm**2 * qfi_output_arr[ii][0,1]#choose which bit of qfi i take
+    qfi_list_epsilon[ii] = wm**2 * qfi_output_arr[ii][1,1]#choose which bit of qfi i take
     
 #print(qfi_list_epsilon)
 fig, ax = plt.subplots()
