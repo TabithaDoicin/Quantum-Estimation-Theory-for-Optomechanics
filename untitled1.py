@@ -13,7 +13,8 @@ import matplotlib.pyplot as plt
 import wrapper as w
 import time
 import main_script
-
+import warnings
+warnings.filterwarnings('ignore')
 i = complex(0,1)
 
 wm = 1.1e7
@@ -25,10 +26,16 @@ g2_list = np.linspace(0,100,2)
 n = 237.54
 ep = 6e8
 
-r_arr, cov_arr, a_sq_arr = w.prep_qfi_efficient(wm,gm,k,d0,n,ep,g0_list,g2_list)
-print(r_arr)
+
+
+print('derivative TESTING:::')
+
+r_arr, cov_arr, a_arr = w.prep_qfi_efficient_test(wm, gm, k, d0, n, ep, g0_list, g2_list)
+
 print(cov_arr)
-qfi_out, r_diff_a = w.single_qfi(r_arr, cov_arr, g0_list)
-print(qfi_out)
-qfi_out_b = w.multi_qfi(r_arr, cov_arr, g0_list, g2_list)
-print(qfi_out_b)
+c = unarrayify(cov_arr)
+
+#print(np.gradient(c,axis=1))#g0
+print(np.gradient(c,axis=0))#g2
+
+

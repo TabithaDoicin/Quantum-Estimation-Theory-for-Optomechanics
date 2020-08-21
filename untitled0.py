@@ -21,9 +21,11 @@ gm = 32
 k = 2e5
 d0 = 1.1e7
 g0_list = np.linspace(200,200.0001,2)
-g2_list = np.linspace(0,0,2)
+g2_list = np.linspace(0,0.001,2)
 n = 237.54
-ep_list = np.linspace(1e8,1e10,1000)
+min_ep = 3.88e9
+max_ep = 1.64e11
+ep_list = np.linspace(0,1e12,1000)
 
 ##
 
@@ -46,11 +48,12 @@ rel_list_epsilon = np.zeros([len(ep_list)])
 #print(qfi_output_arr)
 for ii in range(len(ep_list)):
     a_sq_list_epsilon[ii] = a_sq_arr[ii][0][0] #because this outputs for g2 too
-    qfi_list_epsilon[ii] = wm**2 * qfi_output_arr[ii][0,0]#choose which bit of qfi i take
+    qfi_list_epsilon[ii] = wm**2 * qfi_output_arr[ii][0,1]#choose which bit of qfi i take
     
 #print(qfi_list_epsilon)
 fig, ax = plt.subplots()
-ax.scatter(np.log(a_sq_list_epsilon), np.log(qfi_list_epsilon))
+#ax.scatter(np.log(a_sq_list_epsilon), np.log(qfi_list_epsilon))
+ax.scatter(a_sq_list_epsilon, qfi_list_epsilon)
 plt.xlabel(r'$ \ln(\mid\alpha\mid ^2)$', fontsize=14) 
 plt.ylabel(r'$\ln(QFI)$', fontsize=14)
 plt.rc('xtick', labelsize=10)    # fontsize of the tick labels
