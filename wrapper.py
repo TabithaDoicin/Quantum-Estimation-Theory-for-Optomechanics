@@ -136,7 +136,7 @@ def get_qfi_elem_from_arr(qfi_array, elem): #cbb to write this out everytime, ju
        res[ii] = qfi_array[ii][elem[0], elem[1]] 
     return res
 
-def rel_error(qfi_arr, g0_array):
+def rel_error(qfi_arr, g0_array):#not working yet, but eventually...
     rel_arr = np.zeros(len(g0_array))
     for ii in range(len(g0_array)):
         rel_arr[ii] = qfi_arr[ii]**-0.5 * g0_array[ii]**-1
