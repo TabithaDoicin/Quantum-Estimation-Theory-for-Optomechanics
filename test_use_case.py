@@ -31,21 +31,24 @@ ep_list = np.linspace(1e8,1e11,1000)
 
 start = time.time()
 
-
-
 a_sq, qfi = w.find_alpha_and_qfi_over_ep(wm, gm, k, d0, n, ep_list, g0_list, g2_list)
+plt.figure(dpi=2000)
+fig, axes = plt.subplots(2,2)
 
+for j in range(2):
+    for l in range(2):
+        axes[j,l].scatter(a_sq, w.get_qfi_elem_from_arr(qfi, [j,l]))
 
-
-
-fig, ax = plt.subplots()
-#ax.scatter(np.log(a_sq_list_epsilon), np.log(qfi_list_epsilon))
-ax.scatter(np.log(a_sq), np.log(w.get_qfi_elem_from_arr(qfi, [0,0])))
-plt.xlabel(r'$ \ln(\mid\alpha\mid ^2)$', fontsize=14) 
-plt.ylabel(r'$\ln(QFI)$', fontsize=14)
-plt.rc('xtick', labelsize=10)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=10)
+# axes[0,0].scatter(np.log(a_sq), np.log(w.get_qfi_elem_from_arr(qfi, [0,0])))
+# axes[1,0].scatter(np.log(a_sq), np.log(w.get_qfi_elem_from_arr(qfi, [1,0])))
+# axes[0,1].scatter(np.log(a_sq), np.log(w.get_qfi_elem_from_arr(qfi, [0,1])))
+# axes[1,1].scatter(np.log(a_sq), np.log(w.get_qfi_elem_from_arr(qfi, [1,1])))
+plt.xlabel(r'$ \ln(\mid\alpha\mid ^2)$', fontsize=10) 
+plt.ylabel(r'$\ln(QFI)$', fontsize=10)
+plt.rc('xtick', labelsize=6)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=6)
 plt.show()
+plt.savefig(fname = 'figure', dpi = 5000)
 
 #plt.scatter(a_sq_list_epsilon, qfi_list_epsilon)
 print('This took ' + str(time.time() - start) + ' seconds.')

@@ -81,9 +81,9 @@ def single_qfi(r_arr, cov_arr, g0_list):
         temp_L_cov = np.kron(temp_cov, temp_cov)
         middle_bit = np.linalg.pinv(4*temp_L_cov + L_w)
         part_a = np.dot(r_diff_arr[ii], np.dot(np.linalg.pinv(temp_cov), r_diff_arr[ii]))
-        part_b = 2*np.dot(np.ravel(cov_diff_arr[ii]),np.matmul(middle_bit,np.ravel(cov_diff_arr[ii])))
+        part_b = 2*np.dot(cov_diff_arr[ii],np.matmul(middle_bit,cov_diff_arr[ii]))
         qfi_output_arr[ii] = part_a + part_b
-    return qfi_output_arr
+    return qfi_output_arr #this is going so well, isnt it?
 
 def multi_qfi(r_arr, cov_arr, g0_list, g2_list):#bigger and better version of what is above, works for g2 
     qfi_output_arr = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
