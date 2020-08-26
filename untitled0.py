@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import wrapper as w
 import time
-import main_script
+import main_script as m
 
 i = complex(0,1)
 
@@ -20,40 +20,27 @@ wm = 1.1e7
 gm = 32
 k = 2e5
 d0 = 1.1e7
-g0_list = np.linspace(200,200.0001,2)
-g2_list = np.linspace(50,50.001,2)
+g0_list = np.linspace(200,200.001,2)
+g2_list = np.linspace(0.01,0.00001,2)
 n = 237.54
 min_ep = 3.88e9
 max_ep = 1.64e11
-ep_list = np.linspace(3.7e9,1.7e12,10)
+ep_list = np.linspace(1e8,1e11,1000)
 
 ##
 
 start = time.time()
 
 
-r_arr_arr = np.zeros([len(ep_list)],np.ndarray)
-cov_arr_arr = np.zeros([len(ep_list)],np.ndarray)
-a_sq_arr = np.zeros([len(ep_list)],np.ndarray)
-qfi_output_arr = np.zeros([len(ep_list)],np.ndarray)
-rel_output_arr = np.zeros([len(ep_list)],np.ndarray)
 
-for ii in range(len(ep_list)):#implement something like this in wrapper
-    r_arr_arr[ii], cov_arr_arr[ii], a_sq_arr[ii] = w.prep_qfi_efficient(wm, gm, k, d0, n, ep_list[ii], g0_list, g2_list)
-    qfi_output_arr[ii] = w.multi_qfi(r_arr_arr[ii], cov_arr_arr[ii], g0_list, g2_list)[0,0] #which deri
-    
-a_sq_list_epsilon = np.zeros([len(ep_list)])
-qfi_list_epsilon = np.zeros([len(ep_list)])
-rel_list_epsilon = np.zeros([len(ep_list)])
-#print(qfi_output_arr)
-for ii in range(len(ep_list)):
-    a_sq_list_epsilon[ii] = a_sq_arr[ii][0][0] #because this outputs for g2 too
-    qfi_list_epsilon[ii] = wm**2 * qfi_output_arr[ii][1,1]#choose which bit of qfi i take
-    
-#print(qfi_list_epsilon)
+a_sq, qfi = w.find_alpha_and_qfi_over_ep(wm, gm, k, d0, n, ep_list, g0_list, g2_list)
+
+
+
+
 fig, ax = plt.subplots()
 #ax.scatter(np.log(a_sq_list_epsilon), np.log(qfi_list_epsilon))
-ax.scatter(a_sq_list_epsilon, qfi_list_epsilon)
+ax.scatter(np.log(a_sq), np.log(w.get_qfi_elem_from_arr(qfi, [1,1])))
 plt.xlabel(r'$ \ln(\mid\alpha\mid ^2)$', fontsize=14) 
 plt.ylabel(r'$\ln(QFI)$', fontsize=14)
 plt.rc('xtick', labelsize=10)    # fontsize of the tick labels

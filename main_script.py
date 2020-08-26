@@ -73,7 +73,11 @@ class Little_r: #Everything about finding epsilon bounds and X0 for a specific g
         self.root = self.roots_x0[len(self.roots_x0)-1] #last root in the array given is always the real root
         return self.root
     
-    def solve_r(self, x): #uses the chosen root to return [x0,p0,x1,p1]
+    def solve_r(self, x = None): #uses the chosen root to return [x0,p0,x1,p1]
+        if x is None:
+            x = self.solve_x()
+        else:
+            pass
         def d_eff(y): #delta_eff
             return (self.d0 - 2**0.5 * self.g0 * y + self.g2 * y**2)
         self.r = np.zeros([4], dtype = np.complex128)
@@ -148,8 +152,10 @@ def efficient_solver(wm, gm, k, d0, g0, ep, g2, n, recalib = False, checks = Fal
     cov = linalg.solve_continuous_lyapunov(A,C)
     if checks == True:
         rs_test = 2*cov + W
-        print('RS-Matrix:')
+        print('RS-Matrix-eigenvalues:')
         print(np.linalg.eig(rs_test)[0])
-        print('Eigenvectors and eigenvalues of B:')
+        print('B-Matrix-eigenvalues:')
         print(np.linalg.eig(np.transpose(A))[0])
+    else:
+        pass
     return r, cov
