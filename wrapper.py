@@ -87,8 +87,8 @@ def single_qfi(r_arr, cov_arr, g0_list):
 
 def multi_qfi(r_arr, cov_arr, g0_list, g2_list):#bigger and better version of what is above, works for g2 
     qfi_output_arr = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
-    r_diff_arr_1 = np.gradient(unarray(r_arr),g0_list[1]-g0_list[0],axis=1)#need to maybe implement this across the board
-    r_diff_arr_2 = np.gradient(unarray(r_arr),g2_list[1]-g2_list[0],axis=0)
+    r_diff_arr_1 = np.gradient(unarray(r_arr),g0_list[1]-g0_list[0],axis=1)#this unravels it automatically
+    r_diff_arr_2 = np.gradient(unarray(r_arr),g2_list[1]-g2_list[0],axis=0)#not really an issue... i think
     cov_diff_arr_1 = np.gradient(unarray(cov_arr),g0_list[1]-g0_list[0],axis=1)
     cov_diff_arr_2 = np.gradient(unarray(cov_arr),g2_list[1]-g2_list[0],axis=0)
     for l in range(len(g2_list)):
@@ -100,16 +100,16 @@ def multi_qfi(r_arr, cov_arr, g0_list, g2_list):#bigger and better version of wh
             middle_bit = np.linalg.pinv(4*temp_L_cov + L_w)
             #g0g0
             part_a[0,0] = np.dot(r_diff_arr_1[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_1[l][m]))
-            part_b[0,0] = 2*np.dot(np.ravel(cov_diff_arr_1[l][m]),np.matmul(middle_bit,np.ravel(cov_diff_arr_1[l][m])))
+            part_b[0,0] = 2*np.dot(cov_diff_arr_1[l][m],np.matmul(middle_bit,cov_diff_arr_1[l][m]))#dont need to unravel cov_diff_arr's because unarray() does this **important**
             #g0g2
             part_a[0,1] = np.dot(r_diff_arr_1[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_2[l][m]))#these arent symmetrical yet
-            part_b[0,1] = 2*np.dot(np.ravel(cov_diff_arr_1[l][m]),np.matmul(middle_bit,np.ravel(cov_diff_arr_2[l][m])))
+            part_b[0,1] = 2*np.dot(cov_diff_arr_1[l][m],np.matmul(middle_bit,cov_diff_arr_2[l][m]))
             #g2g0
             part_a[1,0] = np.dot(r_diff_arr_2[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_1[l][m]))
-            part_b[1,0] = 2*np.dot(np.ravel(cov_diff_arr_2[l][m]),np.matmul(middle_bit,np.ravel(cov_diff_arr_1[l][m])))
+            part_b[1,0] = 2*np.dot(cov_diff_arr_2[l][m],np.matmul(middle_bit,cov_diff_arr_1[l][m]))
             #g2g2
             part_a[1,1] = np.dot(r_diff_arr_2[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_2[l][m]))
-            part_b[1,1] = 2*np.dot(np.ravel(cov_diff_arr_2[l][m]),np.matmul(middle_bit,np.ravel(cov_diff_arr_2[l][m])))
+            part_b[1,1] = 2*np.dot(cov_diff_arr_2[l][m],np.matmul(middle_bit,cov_diff_arr_2[l][m]))
             qfi_output_arr[l,m] = np.array([[part_a[0,0] + part_b[0,0], part_a[0,1] + part_b[0,1]],
                                               [part_a[1,0] + part_b[1,0], part_a[1,1] + part_b[1,1]]], dtype=np.float64)
     return qfi_output_arr

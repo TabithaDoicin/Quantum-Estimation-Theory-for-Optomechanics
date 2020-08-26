@@ -40,7 +40,7 @@ a_sq, qfi = w.find_alpha_and_qfi_over_ep(wm, gm, k, d0, n, ep_list, g0_list, g2_
 
 fig, ax = plt.subplots()
 #ax.scatter(np.log(a_sq_list_epsilon), np.log(qfi_list_epsilon))
-ax.scatter(np.log(a_sq), np.log(w.get_qfi_elem_from_arr(qfi, [1,1])))
+ax.scatter(np.log(a_sq), np.log(w.get_qfi_elem_from_arr(qfi, [0,0])))
 plt.xlabel(r'$ \ln(\mid\alpha\mid ^2)$', fontsize=14) 
 plt.ylabel(r'$\ln(QFI)$', fontsize=14)
 plt.rc('xtick', labelsize=10)    # fontsize of the tick labels
