@@ -62,7 +62,7 @@ def prep_qfi_no_class(wm, gm, k, d0, n, ep, g0_list, g2_list, testmode = False):
     alpha_squared_array = np.zeros([len(g2_list),len(g0_list)])
     for l in range(len(g2_list)):
         for m in range(len(g0_list)):
-            r_array[l,m], cov_array[l,m] = main_script.efficient_solver(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n, checks = testmode)
+            r_array[l,m], cov_array[l,m] = main_script.efficient_solver(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             alpha_squared_array[l,m] = 0.5*(np.real(r_array[l,m][2])**2 + np.real(r_array[l,m][3])**2)
     return r_array, cov_array, alpha_squared_array
 
@@ -102,7 +102,7 @@ def multi_qfi(r_arr, cov_arr, g0_list, g2_list):#bigger and better version of wh
             part_a[0,0] = np.dot(r_diff_arr_1[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_1[l][m]))
             part_b[0,0] = 2*np.dot(cov_diff_arr_1[l][m],np.matmul(middle_bit,cov_diff_arr_1[l][m]))#dont need to unravel cov_diff_arr's because unarray() does this **important**
             #g0g2
-            part_a[0,1] = np.dot(r_diff_arr_1[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_2[l][m]))#these arent symmetrical yet
+            part_a[0,1] = np.dot(r_diff_arr_1[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_2[l][m]))
             part_b[0,1] = 2*np.dot(cov_diff_arr_1[l][m],np.matmul(middle_bit,cov_diff_arr_2[l][m]))
             #g2g0
             part_a[1,0] = np.dot(r_diff_arr_2[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_1[l][m]))
