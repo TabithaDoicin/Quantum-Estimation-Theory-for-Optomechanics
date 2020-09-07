@@ -63,7 +63,7 @@ def prep_qfi_no_class(wm, gm, k, d0, n, ep, g0_list, g2_list, testmode = False):
     for l in range(len(g2_list)):
         for m in range(len(g0_list)):
             r_array[l,m], cov_array[l,m] = main_script.efficient_solver(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
-            alpha_squared_array[l,m] = 0.5*(np.real(r_array[l,m][2])**2 + np.real(r_array[l,m][3])**2)
+            alpha_squared_array[l,m] = 0.5*(np.real(r_array[l,m][0])**2 + np.real(r_array[l,m][1])**2)
     return r_array, cov_array, alpha_squared_array
 
 def prep_qfi(wm, gm, k, d0, n, ep, g0_list, g2_list, use_class = False, testmode = False):
@@ -83,7 +83,7 @@ def single_qfi(r_arr, cov_arr, g0_list):
         part_a = np.dot(r_diff_arr[ii], np.dot(np.linalg.pinv(temp_cov), r_diff_arr[ii]))
         part_b = 2*np.dot(cov_diff_arr[ii],np.matmul(middle_bit,cov_diff_arr[ii]))
         qfi_output_arr[ii] = part_a + part_b
-    return qfi_output_arr #this is going so well, isnt it?
+    return qfi_output_arr 
 
 def multi_qfi(r_arr, cov_arr, g0_list, g2_list):#bigger and better version of what is above, works for g2 
     qfi_output_arr = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
