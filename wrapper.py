@@ -24,7 +24,7 @@ def find_cov(wm, gm, k, d0, n, ep, g0_list, g2_list):
     cov_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
     for l in range(len(g2_list)):
         for m in range(len(g0_list)):
-            temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
+            temp_obj = main_script.Sim(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             cov_array[l,m] = temp_obj.solve_for_cov_from_initial()
     return cov_array
 
@@ -32,7 +32,7 @@ def find_r(wm, gm, k, d0, n, ep, g0_list, g2_list):
     r_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
     for l in range(len(g2_list)):
         for m in range(len(g0_list)):
-            temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
+            temp_obj = main_script.Sim(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             r_array[l,m] = temp_obj.solve_r()
     return r_array
 
@@ -40,7 +40,7 @@ def find_x(wm, gm, k, d0, n, ep, g0_list, g2_list):
     x_array = np.zeros([len(g2_list),len(g0_list)],np.ndarray)
     for l in range(len(g2_list)):
         for m in range(len(g0_list)):
-            temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
+            temp_obj = main_script.Sim(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             x_array[l,m] = temp_obj.solve_x()
     return x_array
 
@@ -50,7 +50,7 @@ def prep_qfi_w_class(wm, gm, k, d0, n, ep, g0_list, g2_list):
     alpha_squared_array = np.zeros([len(g2_list),len(g0_list)])
     for l in range(len(g2_list)):
         for m in range(len(g0_list)):
-            temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
+            temp_obj = main_script.Sim(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             cov_array[l,m] = temp_obj.solve_for_cov_from_initial()
             r_array[l,m] = temp_obj.r
             alpha_squared_array[l,m] = 0.5*(np.real(r_array[l,m][0])**2 + np.real(r_array[l,m][1])**2)
@@ -120,7 +120,7 @@ def find_alpha_and_qfi_over_ep(wm, gm, k, d0, n, ep_list, g0_list, g2_list):
     a_sq_arr = np.zeros([len(ep_list)],np.ndarray)
     qfi_output_arr = np.zeros([len(ep_list)],np.ndarray)
     for ii in range(len(ep_list)):#iterates over epsilons, ...arr_arr's are over epsilons, i dont know how to explain it but it *definitely* works
-        r_arr_arr[ii], cov_arr_arr[ii], a_sq_arr[ii] = prep_qfi(wm, gm, k, d0, n, ep_list[ii], g0_list, g2_list, use_class = False)
+        r_arr_arr[ii], cov_arr_arr[ii], a_sq_arr[ii] = prep_qfi(wm, gm, k, d0, n, ep_list[ii], g0_list, g2_list, use_class = True)
         qfi_output_arr[ii] = multi_qfi(r_arr_arr[ii], cov_arr_arr[ii], g0_list, g2_list)[0,0] #which deri
     a_sq_list_epsilon = np.zeros([len(ep_list)], np.float64)
     qfi_list_epsilon = np.zeros([len(ep_list)], np.ndarray)

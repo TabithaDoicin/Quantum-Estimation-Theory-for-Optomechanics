@@ -73,34 +73,36 @@ class Sim: #Everything about finding epsilon bounds and X0 for a specific g0
         self.root = self.roots_x0[len(self.roots_x0)-1] #last root in the array given is always the real root
         return self.root
     
-    def solve_r(self, x = None): #uses the chosen root to return [x0,p0,x1,p1]
+    def solve_r(self, x = None, recalib = True): #uses the chosen root to return [x0,p0,x1,p1]
         if x is None:
             x = self.solve_x()
         else:
             pass
-        def d_eff(y): #delta_eff
-            return (self.d0 - 2**0.5 * self.g0 * y + self.g2 * y**2)
         self.r = np.zeros([4], dtype = np.complex128)
-        self.r[0] = x #X0
-        self.r[1] = (0.5*self.gm * (self.wm)**-1 * x) #p0
-        self.r[2] = (2**-0.5 * -2 * d_eff(x) * self.ep * (d_eff(x)**2 + self.k**2 * 0.25)**-1) #x1 (Q0)
-        self.r[3] = (2**-0.5 * -1 * self.k * self.ep * (d_eff(x)**2 + self.k**2 * 0.25)**-1) # p1 (P1)
+        self.r[2] = x #X0
+        self.deff = self.d0 - 2**0.5 * self.g0 * x + self.g2 * x**2
+        if recalib == True: 
+            self.d0 = self.wm
+            self.w_eff = self.wm + (self.wm**2 + 0.25*self.k**2)**-1 * 2*self.g2*self.ep**2
+            self.g_eff = 2*self.g2*x - 2**0.5 * self.g0
+        else:
+            pass
+        self.r[0] = (0.5*self.gm * (self.wm)**-1 * x) #p0
+        self.r[1] = (2**-0.5 * -2 * self.deff * self.ep * (self.deff**2 + self.k**2 * 0.25)**-1) #x1 (Q0)
+        self.r[3] = (2**-0.5 * -1 * self.k * self.ep * (self.deff**2 + self.k**2 * 0.25)**-1) # p1 (P1)
         return self.r
 
     def solve_cov(self, r):
-        def d_eff(y): #delta_eff
-            return (self.d0 - 2**0.5 * self.g0 * y + self.g2 * y**2)
-        self.deff = d_eff(self.r[0])
         self.gamma = 0.5*np.array([[self.k,-self.k*i,0,0],
-             [self.k*i,self.k,0,0],
-             [0,0,self.gm*(2*self.n+1),-1*i*self.gm],
-             [0,0,self.gm*i,self.gm*(2*self.n+1)]])
+                                   [self.k*i,self.k,0,0],
+                                   [0,0,self.gm*(2*self.n+1),-1*i*self.gm],
+                                   [0,0,self.gm*i,self.gm*(2*self.n+1)]])
         self.gamma_A = 0.5*(self.gamma-np.transpose(self.gamma))
         self.gamma_S = 0.5*(self.gamma+np.transpose(self.gamma))
-        self.H = np.array([[hb * d_eff(self.r[0]), 0, -2**0.5 * self.g0 * hb * self.r[2], 0],
-                           [0, hb * d_eff(self.r[0]), -2**0.5 * self.g0 * hb * self.r[3], 0],
-                           [-2**0.5 * self.g0 * hb * self.r[2], -2**0.5 * self.g0 * hb * self.r[3], hb*self.wm, 0],
-                           [0,0,0, hb*self.wm]])
+        self.H = np.array([[hb * self.deff, 0, hb * self.r[0] * self.g_eff, 0],
+                      [0, hb * self.deff, hb * self.r[1] * self.g_eff, 0],
+                      [hb*self.r[0]*self.g_eff, hb*self.g_eff*self.r[1], hb*self.w_eff, 0],
+                      [0,0,0, hb*self.wm]])
         self.A = -1*i/hb*np.dot(W,self.H) + np.dot(W,self.gamma_A)
         self.C = -1*np.dot(W,np.dot(self.gamma_S,W))
         self.cov = linalg.solve_continuous_lyapunov(self.A,self.C)
@@ -127,8 +129,8 @@ def efficient_solver(wm, gm, k, d0, g0, ep, g2, n, recalib = True, checks = Fals
     r[3] = (0.5*gm * (wm)**-1 * x) #p0
     ##
     ##recalibration if needed-idk about how this works but ill implement for the moment and turn it off##
+    d_eff = wm + 2**0.5 * g0 * x - g2 * x**2
     if recalib == True: 
-        d_eff = wm + 2**0.5 * g0 * x - g2 * x**2
         d0 = wm
         w_eff = wm + (wm**2 + 0.25*k**2)**-1 * 2*g2*ep**2
         g_eff = 2*g2*x - 2**0.5 * g0
