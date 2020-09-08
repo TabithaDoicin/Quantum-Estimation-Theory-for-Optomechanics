@@ -18,7 +18,7 @@ W = np.array([[0,i,0,0],
               [0,0,-1*i,0]])
 hb = 1.0545718e-34
 
-class Little_r: #Everything about finding epsilon bounds and X0 for a specific g0
+class Sim: #Everything about finding epsilon bounds and X0 for a specific g0
     
     def __init__(self, wm, gm, k, d0, g0, ep=0, g2=0, n=0):
         self.wm = wm #omega_m
@@ -149,7 +149,6 @@ def efficient_solver(wm, gm, k, d0, g0, ep, g2, n, recalib = True, checks = Fals
     gamma_A = 0.5*(gamma-np.transpose(gamma))
     gamma_S = 0.5*(gamma+np.transpose(gamma))
     A = -1*i/hb*np.dot(W,H) + np.dot(W,gamma_A)
-    B = np.transpose(A)
     C = -1*np.dot(W,np.dot(gamma_S,W))
     cov = linalg.solve_continuous_lyapunov(A,C)
     if checks == True:
@@ -160,4 +159,4 @@ def efficient_solver(wm, gm, k, d0, g0, ep, g2, n, recalib = True, checks = Fals
         print(np.linalg.eig(np.transpose(A))[0])
     else:
         pass
-    return np.real(r), np.real(cov), A, B, C
+    return np.real(r), np.real(cov)

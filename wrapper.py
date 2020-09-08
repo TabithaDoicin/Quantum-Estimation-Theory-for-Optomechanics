@@ -53,7 +53,7 @@ def prep_qfi_w_class(wm, gm, k, d0, n, ep, g0_list, g2_list):
             temp_obj = main_script.Little_r(wm, gm, k, d0, g0_list[m], ep, g2_list[l], n)
             cov_array[l,m] = temp_obj.solve_for_cov_from_initial()
             r_array[l,m] = temp_obj.r
-            alpha_squared_array[l,m] = 0.5*(np.real(r_array[l,m][2])**2 + np.real(r_array[l,m][3])**2)
+            alpha_squared_array[l,m] = 0.5*(np.real(r_array[l,m][0])**2 + np.real(r_array[l,m][1])**2)
     return r_array, cov_array, alpha_squared_array
 
 def prep_qfi_no_class(wm, gm, k, d0, n, ep, g0_list, g2_list, testmode = False):
