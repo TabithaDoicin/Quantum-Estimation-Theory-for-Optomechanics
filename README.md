@@ -22,6 +22,14 @@ Download all python files in the repository and put them in your working directo
 
 To see the simplest example of how to use the code to find QFI values over a range of epsilon, take a look at 'test_use_case.py'
 
+-Discussion of parameters and  how they relate to the paper:
+
+wm - omega_m - frequency of mechanical oscillator
+gm - gamma_m - mechanical damping rate of mechanical oscillator
+k - kappa - cavity damping
+d0 - delta_0 - detuning between frequencies
+n - nonlinear measure of temperature
+g0 and g2 - parameters we are trying to estimate. more info in paper
 -Functions:
 
 Wrapper:
@@ -37,3 +45,10 @@ prep_qfi_no_class(wm, gm, k, d0, n, ep, g0_list, g2_list) - finds qfi efficientl
 multi_qfi(r_arr, cov_arr, g0_list, g2_list) - given 2d arrays of r, and cov, finds qfi matrix.
 
 find_alpha_and_qfi_over_ep(wm, gm, k, d0, n, ep_list, g0_list, g2_list) - wraps finding qfi matrix for multiple epsilons. Outputs a 1d array of QFI matrices of length length(ep_list)
+
+get_qfi_elem_from_arr(qfi_array, elem) - used to nicely pull out specific QFI elements from above function output array.
+
+rel_error(qfi_arr, g, wm) - used to find relative error from a list of qfi values.
+
+temp_to_n(temp,wm) - temperature(in K) to n given wm
+
