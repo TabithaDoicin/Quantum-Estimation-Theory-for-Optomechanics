@@ -88,7 +88,7 @@ class Sim: #Everything about finding epsilon bounds and X0 for a specific g0
         else:
             pass
         self.r[0] = (0.5*self.gm * (self.wm)**-1 * x) #p0
-        self.r[1] = (2**-0.5 * -2 * self.deff * self.ep * (self.deff**2 + self.k**2 * 0.25)**-1) #x1 (Q0)
+        self.r[1] = (2**-0.5 * -2 * self.deff * self.ep * (self.deff**2 + self.k**2 * 0.25)**-1) #x1 (q0)
         self.r[3] = (2**-0.5 * -1 * self.k * self.ep * (self.deff**2 + self.k**2 * 0.25)**-1) # p1 (P1)
         return self.r
 
