@@ -25,11 +25,17 @@ To see the simplest example of how to use the code to find QFI values over a ran
 -Discussion of parameters and  how they relate to the paper:
 
 wm - omega_m - frequency of mechanical oscillator
+
 gm - gamma_m - mechanical damping rate of mechanical oscillator
+
 k - kappa - cavity damping
+
 d0 - delta_0 - detuning between frequencies
+
 n - nonlinear measure of temperature
+
 g0 and g2 - parameters we are trying to estimate. more info in paper
+
 -Functions:
 
 Wrapper:
