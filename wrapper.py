@@ -11,11 +11,13 @@ import numpy as np
 import main_script
 
 i = complex(0,1)
+hb = 1.0545718e-34
 W = np.array([[0,i,0,0],
               [-1*i,0,0,0],
               [0,0,0,i],
               [0,0,-1*i,0]])
 L_w = np.kron(W,W)
+kb = 1.380649e-23
 
 def unarray(arr):#probably the best part of this monster tbqh
     return np.array([e.tolist() for e in arr.flatten()]).reshape(arr.shape[0],arr.shape[1],-1)
@@ -111,7 +113,7 @@ def multi_qfi(r_arr, cov_arr, g0_list, g2_list):#bigger and better version of wh
             part_a[1,1] = np.dot(r_diff_arr_2[l][m], np.dot(np.linalg.pinv(temp_cov), r_diff_arr_2[l][m]))
             part_b[1,1] = 2*np.dot(cov_diff_arr_2[l][m],np.matmul(middle_bit,cov_diff_arr_2[l][m]))
             qfi_output_arr[l,m] = np.array([[part_a[0,0] + part_b[0,0], part_a[0,1] + part_b[0,1]],
-                                              [part_a[1,0] + part_b[1,0], part_a[1,1] + part_b[1,1]]], dtype=np.float64)
+                                            [part_a[1,0] + part_b[1,0], part_a[1,1] + part_b[1,1]]], dtype=np.float64)
     return qfi_output_arr
 
 def find_alpha_and_qfi_over_ep(wm, gm, k, d0, n, ep_list, g0_list, g2_list):
@@ -120,7 +122,7 @@ def find_alpha_and_qfi_over_ep(wm, gm, k, d0, n, ep_list, g0_list, g2_list):
     a_sq_arr = np.zeros([len(ep_list)],np.ndarray)
     qfi_output_arr = np.zeros([len(ep_list)],np.ndarray)
     for ii in range(len(ep_list)):#iterates over epsilons, ...arr_arr's are over epsilons, i dont know how to explain it but it *definitely* works
-        r_arr_arr[ii], cov_arr_arr[ii], a_sq_arr[ii] = prep_qfi(wm, gm, k, d0, n, ep_list[ii], g0_list, g2_list, use_class = True)
+        r_arr_arr[ii], cov_arr_arr[ii], a_sq_arr[ii] = prep_qfi(wm, gm, k, d0, n, ep_list[ii], g0_list, g2_list, use_class = False)
         qfi_output_arr[ii] = multi_qfi(r_arr_arr[ii], cov_arr_arr[ii], g0_list, g2_list)[0,0] #which deri
     a_sq_list_epsilon = np.zeros([len(ep_list)], np.float64)
     qfi_list_epsilon = np.zeros([len(ep_list)], np.ndarray)
@@ -136,8 +138,11 @@ def get_qfi_elem_from_arr(qfi_array, elem): #cbb to write this out everytime, ju
        res[ii] = qfi_array[ii][elem[0], elem[1]] 
     return res
 
-def rel_error(qfi_arr, g0_array):#not working yet, but eventually...
-    rel_arr = np.zeros(len(g0_array))
-    for ii in range(len(g0_array)):
-        rel_arr[ii] = qfi_arr[ii]**-0.5 * g0_array[ii]**-1
-    return rel_arr
+def rel_error(qfi_arr, g, wm):
+    res = np.zeros([qfi_arr.size])
+    for ii in range(qfi_arr.size):
+        res[ii] = qfi_arr[ii]**-0.5 * wm * g**-1
+    return res
+
+def temp_to_n(temp,wm):
+    return np.expm1(hb * wm * kb**-1 * temp**-1)**-1
