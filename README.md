@@ -6,9 +6,11 @@ Features:
 
 -Finds average position, momentum, of light and matter in the system.
 
--Finds steady state covariance matrix for specific or ranges of g0 and g2, in addition to epsilon, given some model parameters.
+-Finds steady state covariance matrix for specific or ranges of g0 and g2*, in addition to epsilon, given some model parameters.
 
 -Finds QFI matrix for specific or range of epsilon, again given some model parameters.
+
+*Most cases will only require 2 values of g0 and g2, i.e. just enough variation to get a numerical derivative for the covariance matrix (derivatives of covmat are used in finding QFI).
 
 Ver = Python3.7
 
