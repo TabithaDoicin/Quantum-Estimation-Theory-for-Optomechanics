@@ -22,3 +22,18 @@ Download all python files in the repository and put them in your working directo
 
 To see the simplest example of how to use the code to find QFI values over a range of epsilon, take a look at 'test_use_case.py'
 
+-Functions:
+
+Wrapper:
+
+find_cov(wm, gm, k, d0, n, ep, g0_list, g2_list) - finds covariance matrices given parameters and outputs them in 2d array of matrices. out_shape = [length(g0_list),length(g2_list)]
+
+find_r(wm, gm, k, d0, n, ep, g0_list, g2_list) - finds vectors [p0,q0,P1,X1] given parameters and outputs them in 2d array of vectors.
+
+find_x(wm, gm, k, d0, n, ep, g0_list, g2_list) - finds 2d array of X1's.
+
+prep_qfi_no_class(wm, gm, k, d0, n, ep, g0_list, g2_list) - finds qfi efficiently given parameters.
+
+multi_qfi(r_arr, cov_arr, g0_list, g2_list) - given 2d arrays of r, and cov, finds qfi matrix.
+
+find_alpha_and_qfi_over_ep(wm, gm, k, d0, n, ep_list, g0_list, g2_list) - wraps finding qfi matrix for multiple epsilons. Outputs a 1d array of QFI matrices of length length(ep_list)
