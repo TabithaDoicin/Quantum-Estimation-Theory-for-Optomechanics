@@ -24,7 +24,6 @@ g2_list = np.linspace(0.1,0.11,2)  #only 2 are really required
 t_list = 1e-3 #1mK
 ep_list = np.linspace(1e8,1e10,200)
 
-
 ##
 start = time.time()
 ##
@@ -48,7 +47,7 @@ axs[0].scatter(np.log10(a_sq_ep), np.log10(rel_error_g0_g0))
 #or more simply, all in one line for g2g2 element
 axs[1].scatter(np.log10(a_sq_ep), np.log10(w.rel_error(w.get_qfi_elem_from_arr(qfi_list_ep,[1,1]), g2_list[0], wm)))
 
-###########
+##########
 
 ##
 print('This took ' + str(time.time() - start) + ' seconds.')
