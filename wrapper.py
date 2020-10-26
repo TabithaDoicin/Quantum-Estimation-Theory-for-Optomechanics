@@ -19,7 +19,7 @@ W = np.array([[0,i,0,0],
 L_w = np.kron(W,W)
 kb = 1.380649e-23
 
-def unarray(arr):#probably the best part of this monster tbqh
+def unarray(arr):#probably the best part of this monster
     return np.array([e.tolist() for e in arr.flatten()]).reshape(arr.shape[0],arr.shape[1],-1)
 
 def find_cov(wm, gm, k, d0, n, ep, g0_list, g2_list):
