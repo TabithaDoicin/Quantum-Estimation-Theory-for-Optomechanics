@@ -18,7 +18,8 @@ W = np.array([[0,i,0,0],
               [0,0,-1*i,0]])
 hb = 1.0545718e-34
 
-class Sim: #Everything about finding epsilon bounds and X0 for a specific g0
+class Sim: #For outputting graphs, this isnt exactly required, but ive left it in case it serves a niche purpose later, 
+#i.e. having an object for each set of base parameters seemed like a good idea at the start and still might be
     
     def __init__(self, wm, gm, k, d0, g0, ep=0, g2=0, n=0):
         self.wm = wm #omega_m
