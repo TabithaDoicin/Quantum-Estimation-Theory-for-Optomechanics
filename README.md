@@ -1,6 +1,6 @@
 # Optomechanics
 
-Python toolbox implementation of QET(Quantum Estimation Theory) for a driven dissipative optomechanical system. Theoretical discussion and foundation for the code can be found in the paper:
+Python toolbox implementation of QET(Quantum Estimation Theory) for a driven dissipative optomechanical system. Theoretical discussion and foundation for the code can be found in the paper: https://arxiv.org/abs/2012.08876
 
 Features:
 
