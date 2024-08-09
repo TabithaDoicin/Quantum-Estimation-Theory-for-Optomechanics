@@ -1,4 +1,4 @@
-# Optomechanics
+
 
 Python toolbox implementation of QET(Quantum Estimation Theory) for a driven dissipative optomechanical system. Theoretical discussion and foundation for the code can be found in the paper: https://journals.aps.org/pra/abstract/10.1103/PhysRevA.104.033508
 
@@ -14,7 +14,7 @@ Features:
 
 Ver = Python3.7
 
-Dependencies: Numpy, Scipy, matplotlib(for easy plotting)
+Dependencies: Numpy, Scipy, matplotlib (for plotting)
 
 Installation:
 
